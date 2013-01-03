@@ -23,7 +23,7 @@ class Page(object):
     GA = "UA-XXXXX-X"
     
     def __init__(self, template=None, templatefile=None, title="", wrapper=False):
-        self.meta['title'] = title
+        self.meta['title'] += title
         self.wrapper = wrapper
         self.template = Template(template, filename=templatefile, preprocessor=self.preprocessor)
 
@@ -35,6 +35,12 @@ class Page(object):
     def render(self):
         meta = self.meta
         meta['keywords'] = ','.join(meta['keywords'])
-        css = [css_path + f for f in self.stylesheets]
-        js = [js_path + f for f in self.javascripts]
+        css = [self.static_paths['stylesheets'] + f for f in self.stylesheets]
+        js = [self.static_paths['javascripts'] + f for f in self.javascripts]
         return self.template.render(page=self, meta=meta, css=css, js=js)
+
+    def add_stylesheet(self, link):
+        self.stylesheets.append(link)
+
+    def add_javascript(self, link):
+        self.javascripts.append(link)
